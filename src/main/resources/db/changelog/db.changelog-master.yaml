@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/20251123_2213_init_user_table.sql
+
+  - include:
+      file: db/changelog/20251127_1348_init_film_table.sql
+
+  - include:
+      file: db/changelog/20251127_1551_alter_table_film.sql
+
+  - include:
+      file: db/changelog/20251127_1750_init_table_feedback.sql
+
+  - include:
+      file: db/changelog/20251127_1920_init_table_friend.sql
+
+  - include:
+      file: db/changelog/20251127_2100_alter_table_user.sql

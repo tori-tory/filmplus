@@ -1,37 +1,38 @@
 package ru.jabki.filmplus.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.User;
+import ru.jabki.filmplus.repository.UserRepository;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
-    private static final Set<User> users = new HashSet<>();
+    private final UserRepository userRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public User create(final User user) {
         validate(user);
-        user.setId((long) (users.size() + 1));
-        users.add(user);
+        userRepository.insert(user);
         return user;
     }
 
+    @Transactional(readOnly = true)
     public User getById(final Long id) {
-        final User user = users.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
+        final User user = userRepository.getById(id);
         if (user == null) {
-            throw new UserException("Пользователь не найден");
+            throw new UserException(String.format("Пользователь id = %d не найден", id));
         }
         return user;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public User update(final User user) {
         validate(user);
         final User existUser = getById(user.getId());
@@ -39,23 +40,13 @@ public class UserService {
         existUser.setEmail(user.getEmail());
         existUser.setLogin(user.getLogin());
         existUser.setBirthday(user.getBirthday());
+        userRepository.update(existUser);
         return existUser;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void delete(final Long id) {
-        users.remove(getById(id));
-    }
-
-    public User addFriend(final Long userId, final Long friendId) {
-        User user = getById(userId);
-        User friend = getById(friendId);
-
-        if (userId.equals(friendId)) {
-            throw new UserException("Нельзя добавить самого себя в друзья");
-        }
-
-        user.getFriends().add(friendId);
-        return user;
+        userRepository.delete(id);
     }
 
     private void validate(final User user) {
@@ -76,11 +67,6 @@ public class UserService {
         }
         if (!user.getBirthday().isBefore(LocalDate.now())) {
             throw new UserException("Дата рождения не может быть из будущего");
-        }
-        if (user.getFriends() == null) {
-            user.setFriends(new HashSet<>());
-        } else {
-            user.getFriends().remove(0L); // очищаем ошибочный id = 0
         }
     }
 }

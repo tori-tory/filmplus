@@ -1,0 +1,1 @@
+ALTER TABLE filmplus.film DROP COLUMN genres;

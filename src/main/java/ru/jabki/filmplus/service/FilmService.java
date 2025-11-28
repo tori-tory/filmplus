@@ -1,49 +1,36 @@
 package ru.jabki.filmplus.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.jabki.filmplus.exception.FilmException;
+import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.Film;
+import ru.jabki.filmplus.repository.FilmRepository;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class FilmService {
 
-    private static final Set<Film> films = new HashSet<>();
+    private final FilmRepository filmRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public Film create(final Film film) {
         validate(film);
-        film.setId((long) (films.size() + 1));
-        films.add(film);
-        return film;
-    }
-    public Film getById(final Long id) {
-        final Film film = films.stream()
-                .filter(f -> f.getId() == id)
-                .findFirst()
-                .orElse(null);
-        if (film == null) {
-            throw new FilmException("Фильм не найден");
-        }
+        filmRepository.insert(film);
         return film;
     }
 
-    public List<Film> getByName(final String query) {
-        if (query == null || query.isBlank()) {
-            throw new FilmException("Не заданы параметры поиска фильма");
+    @Transactional(readOnly = true)
+    public Film getById(final Long id) {
+        final Film film = filmRepository.getById(id);
+        if (film == null) {
+            throw new UserException("Фильм не найден");
         }
-        String lowerCaseQuery = query.toLowerCase();
-        final List<Film> foundFilms = films.stream()
-                .filter(f -> f.getName().toLowerCase().contains(lowerCaseQuery))
-                .toList();
-        if (foundFilms.isEmpty()) {
-            throw new FilmException("Фильм не найден");
-        }
-        return foundFilms;
+        return film;
     }
 
     public Film update(final Film film) {
@@ -58,7 +45,7 @@ public class FilmService {
     }
 
     public void delete(final Long id) {
-        films.remove(getById(id));
+        filmRepository.delete(id);
     }
 
     private void validate(final Film film) {
@@ -81,6 +68,4 @@ public class FilmService {
             throw new FilmException("Должен быть выбран хотя бы один жанр");
         }
     }
-
-
 }

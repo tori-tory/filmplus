@@ -1,8 +1,8 @@
 package ru.jabki.filmplus.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -10,15 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.jabki.filmplus.model.Film;
 import ru.jabki.filmplus.service.FilmService;
 
-import java.util.List;
-import java.util.Set;
 
 @RestController
+@AllArgsConstructor
+
 @RequestMapping("/api/v1/film")
 @Tag(name = "Фильмы")
 
@@ -26,9 +25,6 @@ public class FilmController {
 
     private final FilmService filmService;
 
-    public FilmController(final FilmService filmService) {
-        this.filmService = filmService;
-    }
 
     @PostMapping()
     @Operation(summary = "Создать фильм")
@@ -54,12 +50,4 @@ public class FilmController {
         filmService.delete(id);
     }
 
-    @GetMapping("/search")
-    @Operation(summary = "Поиск фильма по названию")
-    public List<Film> searchFilms(
-            @RequestParam(required = false)
-            @Parameter(example = "Бриллиантовая рука")
-            String query) {
-        return filmService.getByName(query);
-    }
 }
