@@ -6,7 +6,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.jabki.filmplus.exception.BadRequestException;
 import ru.jabki.filmplus.model.Friend;
-import ru.jabki.filmplus.model.User;
+
 
 @Repository
 @AllArgsConstructor
@@ -41,7 +41,11 @@ public class FriendRepository {
     }
 
     public Friend getById(Long id) {
-        return null;
+        try {
+            return jdbcTemplate.queryForObject(GET_BY_ID, new MapSqlParameterSource("id", id), friendMapper);
+        } catch (Exception e) {
+            throw new BadRequestException(String.format("Друзья по id %d не найдены", id));
+        }
     }
 
     private MapSqlParameterSource friendToSql(Friend friend) {
@@ -50,7 +54,6 @@ public class FriendRepository {
         params.addValue("id", friend.getId());
         params.addValue("user_id", friend.getUserId());
         params.addValue("friend_id", friend.getFriendId());
-
         return params;
     }
 }

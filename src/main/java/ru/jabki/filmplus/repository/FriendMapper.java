@@ -3,7 +3,6 @@ package ru.jabki.filmplus.repository;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.jabki.filmplus.model.Friend;
-import ru.jabki.filmplus.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,5 +17,4 @@ public class FriendMapper implements RowMapper<Friend> {
                 .friendId(rs.getLong("friend_id"))
                 .build();
     }
-
 }

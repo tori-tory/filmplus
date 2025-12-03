@@ -15,7 +15,6 @@ import ru.jabki.filmplus.service.FriendService;
 
 @RestController
 @AllArgsConstructor
-
 @RequestMapping("/api/v1/friend")
 @Tag(name = "Друзья")
 public class FriendController {
@@ -23,19 +22,19 @@ public class FriendController {
     public final FriendService friendService;
 
     @PostMapping
-    @Operation(summary = "Создать друга")
+    @Operation(summary = "Добавить друга")
     public Friend create(@RequestBody final Friend friend) {
         return friendService.create(friend);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Получить друга по id")
+    @Operation(summary = "Получить друзей по id")
     public Friend getById(@PathVariable("id") Long id) {
         return friendService.getById(id);
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Удалить друга по id")
+    @Operation(summary = "Удалить друзей по id")
     public void delete(@PathVariable("id") Long id) {
         friendService.delete(id);
     }

@@ -16,3 +16,9 @@ databaseChangeLog:
 
   - include:
       file: db/changelog/20251127_2100_alter_table_user.sql
+
+  - include:
+      file: db/changelog/20251203_1105_like_table_init.sql
+
+  - include:
+      file: db/changelog/20251203_1106_alter_tables.sql

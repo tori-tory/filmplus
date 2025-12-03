@@ -14,19 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.jabki.filmplus.model.Film;
 import ru.jabki.filmplus.service.FilmService;
 
-
 @RestController
 @AllArgsConstructor
-
 @RequestMapping("/api/v1/film")
 @Tag(name = "Фильмы")
-
 public class FilmController {
 
     private final FilmService filmService;
 
-
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "Создать фильм")
     public Film create(@RequestBody final Film film) {
         return filmService.create(film);
@@ -38,16 +34,15 @@ public class FilmController {
         return filmService.getById(id);
     }
 
-    @PatchMapping()
+    @PatchMapping
     @Operation(summary = "Обновить фильм")
     public Film update(@RequestBody final Film film) {
         return filmService.update(film);
     }
 
-    @DeleteMapping()
+    @DeleteMapping
     @Operation(summary = "Удалить фильм по id")
     public void delete(@PathVariable("id") Long id) {
         filmService.delete(id);
     }
-
 }

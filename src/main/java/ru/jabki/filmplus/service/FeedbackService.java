@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import ru.jabki.filmplus.exception.FeedbackException;
 import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.Feedback;
 import ru.jabki.filmplus.repository.FeedbackRepository;
@@ -32,26 +33,17 @@ public class FeedbackService {
         return feedback;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void delete(final Long id) {
-        feedbackRepository.delete(id);
-    }
-
     @Transactional(readOnly = true)
     public Feedback getById(final Long id) {
-        final Feedback feedback = feedbackRepository.getById(id);
-        if (feedback == null) {
-            throw new UserException("Пользователь не найден");
-        }
-        return feedback;
+        return feedbackRepository.getById(id);
     }
 
     private void validate (final Feedback feedback) {
         if (feedback == null) {
-            throw new UserException("Данные не определены");
+            throw new FeedbackException("Данные не определены");
         }
-        if ((feedback.getLike() == 0) && !StringUtils.hasText(feedback.getContent())) {
-            throw new UserException("Если хотите оценить фильм, нужно или поставить лайк или написать отзыв");
+        if (!StringUtils.hasText(feedback.getReviewText())) {
+            throw new FeedbackException("Если хотите оценить фильм, нужно написать отзыв");
         }
 
         userService.getById(feedback.getUserId());

@@ -8,9 +8,7 @@ import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.Friend;
 import ru.jabki.filmplus.repository.FriendRepository;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -47,11 +45,4 @@ public class FriendService {
     public Friend getById(final long id) {
         return friendRepository.getById(id);
     }
-
-    /*public Friend getByUserIdAndFriendId(final long userId, final long friendId) {
-        return friends.stream()
-                .filter(f -> (f.getUserId() == userId) && (f.getFriendId() == friendId))
-                .findFirst()
-                .orElse(null);
-    }*/
 }

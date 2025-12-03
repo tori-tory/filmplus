@@ -12,21 +12,16 @@ import ru.jabki.filmplus.model.Feedback;
 public class FeedbackRepository {
 
     private static final String INSERT = """
-        INSERT INTO filmplus.feedback(user_id, film_id, content)
-        VALUES (:user_id, :film_id, :content)
+        INSERT INTO filmplus.feedback(user_id, film_id, review_text)
+        VALUES (:user_id, :film_id, :review_text)
         RETURNING *
     """;
 
     private static final String UPDATE = """
             UPDATE filmplus.feedback
-            SET user_id = :user_id, film_id = :film_id, content = :content
+            SET user_id = :user_id, film_id = :film_id, review_text = :review_text
             WHERE id = :id
             RETURNING *
-            """;
-
-    private static final String DELETE = """
-            DELETE FROM filmplus.feedback
-            WHERE id = :id
             """;
 
     private static final String GET_BY_ID = """
@@ -46,10 +41,6 @@ public class FeedbackRepository {
         return jdbcTemplate.queryForObject(UPDATE, feedbackToSql(feedback), feedbackMapper);
     }
 
-    public void delete(Long id) {
-        jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
-    }
-
     public Feedback getById(Long id) {
         try {
             return jdbcTemplate.queryForObject(GET_BY_ID, new MapSqlParameterSource("id", id), feedbackMapper);
@@ -64,7 +55,7 @@ public class FeedbackRepository {
         params.addValue("id", feedback.getId());
         params.addValue("user_id", feedback.getUserId());
         params.addValue("film_id", feedback.getFilmId());
-        params.addValue("content", feedback.getContent());
+        params.addValue("review_text", feedback.getReviewText());
         return params;
     }
 }

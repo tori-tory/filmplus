@@ -16,14 +16,13 @@ import ru.jabki.filmplus.service.UserService;
 
 @RestController
 @AllArgsConstructor
-
 @RequestMapping("/api/v1/user")
 @Tag(name = "Пользователи")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "Создать пользователя")
     public User create(@RequestBody final User user) {
         return userService.create(user);
@@ -35,7 +34,7 @@ public class UserController {
         return userService.getById(id);
     }
 
-    @PutMapping()
+    @PutMapping
     @Operation(summary = "Обновление пользователя")
     public User update(@RequestBody final User user) {
         return userService.update(user);

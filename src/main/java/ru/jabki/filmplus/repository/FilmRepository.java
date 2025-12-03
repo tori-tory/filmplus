@@ -7,19 +7,21 @@ import org.springframework.stereotype.Repository;
 import ru.jabki.filmplus.exception.BadRequestException;
 import ru.jabki.filmplus.model.Film;
 
+import java.util.stream.Collectors;
+
 @Repository
 @AllArgsConstructor
 public class FilmRepository {
 
     private static final String INSERT = """
-        INSERT INTO filmplus.film(name, description, releasedate, duration)
-        VALUES (:name, :description, :releasedate, :duration)
+        INSERT INTO filmplus.film(name, description, release_date, duration, genre)
+        VALUES (:name, :description, :release_date, :duration, :genre)
         RETURNING *
     """;
 
     private static final String UPDATE = """
             UPDATE filmplus.film
-            SET name = :name, description = :description, releasedate = :releasedate, duration = :duration
+            SET name = :name, description = :description, release_date = :release_date, duration = :duration, genre = :genre
             WHERE id = :id
             RETURNING *
             """;
@@ -64,8 +66,14 @@ public class FilmRepository {
         params.addValue("id", film.getId());
         params.addValue("name", film.getName());
         params.addValue("description", film.getDescription());
-        params.addValue("releasedate", film.getReleaseDate());
+        params.addValue("release_date", film.getReleaseDate());
         params.addValue("duration", film.getDuration());
+        params.addValue("genre",
+                film.getGenres().stream()
+                        .map(Enum::name)
+                        .collect(Collectors.joining(","))
+        );
+
         return params;
     }
 }
