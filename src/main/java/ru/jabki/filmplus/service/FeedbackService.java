@@ -32,6 +32,11 @@ public class FeedbackService {
         return feedback;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public void delete(final Long id) {
+        feedbackRepository.delete(id);
+    }
+
     @Transactional(readOnly = true)
     public Feedback getById(final Long id) {
         final Feedback feedback = feedbackRepository.getById(id);

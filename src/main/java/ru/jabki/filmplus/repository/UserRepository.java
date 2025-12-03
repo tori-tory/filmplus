@@ -47,11 +47,7 @@ public class UserRepository {
     }
 
     public void delete(final Long id){
-        try {
-            jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
-        } catch (Exception e) {
-            throw new BadRequestException(String.format("Пользователь с id %d не найден", id));
-        }
+        jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
     }
 
     public User getById(final Long id) {

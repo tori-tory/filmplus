@@ -33,6 +33,7 @@ public class FilmService {
         return film;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public Film update(final Film film) {
         validate(film);
         final Film existFilm = getById(film.getId());
@@ -41,9 +42,11 @@ public class FilmService {
         existFilm.setReleaseDate(film.getReleaseDate());
         existFilm.setDuration(film.getDuration());
         existFilm.setGenres(film.getGenres());
+        filmRepository.update(existFilm);
         return existFilm;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void delete(final Long id) {
         filmRepository.delete(id);
     }

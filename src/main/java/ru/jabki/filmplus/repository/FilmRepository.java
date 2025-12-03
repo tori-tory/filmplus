@@ -35,28 +35,24 @@ public class FilmRepository {
             WHERE id = :id
             """;
 
-    private final FilmMapper userMapper;
+    private final FilmMapper filmMapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public Film insert(Film film){
-        return jdbcTemplate.queryForObject(INSERT, filmToSql(film), userMapper);
+        return jdbcTemplate.queryForObject(INSERT, filmToSql(film), filmMapper);
     }
 
     public Film update(Film film){
-        return jdbcTemplate.queryForObject(UPDATE, filmToSql(film), userMapper);
+        return jdbcTemplate.queryForObject(UPDATE, filmToSql(film), filmMapper);
     }
 
     public void delete(Long id){
-        try {
-            jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
-        } catch (Exception e) {
-            throw new BadRequestException(String.format("Фильм с id %d не найден", id));
-        }
+        jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
     }
 
     public Film getById(Long id) {
         try {
-            return jdbcTemplate.queryForObject(GET_BY_ID, new MapSqlParameterSource("id", id), userMapper);
+            return jdbcTemplate.queryForObject(GET_BY_ID, new MapSqlParameterSource("id", id), filmMapper);
         } catch (Exception e) {
             throw new BadRequestException(String.format("Фильм с id %d не найден", id));
         }

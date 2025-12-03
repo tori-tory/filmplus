@@ -37,11 +37,7 @@ public class FriendRepository {
     }
 
     public void delete(Long id) {
-        try {
-            jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
-        } catch (Exception e) {
-            throw new BadRequestException(String.format("Запись с id %d не найдена", id));
-        }
+        jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
     }
 
     public Friend getById(Long id) {

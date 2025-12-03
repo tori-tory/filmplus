@@ -47,11 +47,7 @@ public class FeedbackRepository {
     }
 
     public void delete(Long id) {
-        try {
-            jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
-        } catch (Exception e) {
-            throw new BadRequestException(String.format("Отзыв с id %d не найден", id));
-        }
+        jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
     }
 
     public Feedback getById(Long id) {
