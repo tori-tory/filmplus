@@ -11,8 +11,8 @@ import ru.jabki.filmplus.model.Like;
 public class LikeRepository {
 
     private static final String INSERT = """
-            INSERT INTO filmplus."like" (film_id, user_id)
-            VALUES (:film_id, :user_id)
+            INSERT INTO filmplus."like" (user_id, film_id)
+            VALUES (:user_id, :film_id)
             RETURNING *
             """;
 
@@ -26,10 +26,7 @@ public class LikeRepository {
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public Like insert(Like like) {
-        return jdbcTemplate.queryForObject(
-                INSERT,
-                likeToSql(like),
-                likeMapper);
+        return jdbcTemplate.queryForObject(INSERT, likeToSql(like), likeMapper);
     }
 
     public void delete(Long userId, Long filmId) {

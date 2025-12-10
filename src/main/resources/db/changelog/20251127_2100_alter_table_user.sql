@@ -1,1 +1,0 @@
-ALTER TABLE filmplus.user ADD CONSTRAINT user_ukey UNIQUE (email)

@@ -26,13 +26,6 @@ public class FeedbackService {
         return feedback;
     }
 
-    @Transactional(rollbackFor = Exception.class)
-    public Feedback update(final Feedback feedback) {
-        validate(feedback);
-        feedbackRepository.update(feedback);
-        return feedback;
-    }
-
     @Transactional(readOnly = true)
     public Feedback getById(final Long id) {
         return feedbackRepository.getById(id);

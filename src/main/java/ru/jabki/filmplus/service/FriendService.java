@@ -4,41 +4,34 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.jabki.filmplus.exception.FriendException;
-import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.Friend;
 import ru.jabki.filmplus.repository.FriendRepository;
-
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class FriendService {
 
     private final FriendRepository friendRepository;
-
     private final UserService userService;
 
     @Transactional(rollbackFor =  Exception.class)
     public Friend create(final Friend friend) {
-        Long userId = userService.getById(friend.getUserId()).getId();
-
-        Long friendId;
-        try {
-            friendId = userService.getById(friend.getFriendId()).getId();
-        } catch (UserException e) {
-            throw new FriendException("Друг не найден");
-        }
-
-        if (Objects.equals(userId, friendId)) {
+        if (friend.getUserId().equals(friend.getFriendId())) {
             throw new FriendException("Нельзя добавить самого себя в друзья");
         }
-        friendRepository.insert(friend);
-        return friend;
+        validate(friend);
+
+        return friendRepository.insert(friend);
     }
 
     @Transactional(rollbackFor =  Exception.class)
     public void delete(final Long id) {
         friendRepository.delete(id);
+    }
+
+    private void validate(final Friend friend) {
+        userService.getById(friend.getUserId());
+        userService.getById(friend.getFriendId());
     }
 
     @Transactional(readOnly = true)

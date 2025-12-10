@@ -1,12 +1,14 @@
 package ru.jabki.filmplus.repository;
 
 import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.jabki.filmplus.exception.BadRequestException;
 import ru.jabki.filmplus.model.Film;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
@@ -36,9 +38,15 @@ public class FilmRepository {
             FROM filmplus.film
             WHERE id = :id
             """;
+    private static final String SEARCH_BY_NAME = """
+            SELECT *
+            FROM filmplus.film
+            WHERE LOWER(name) like LOWER('%'||?||'%')
+            """;
 
     private final FilmMapper filmMapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplateWithoutParams;
 
     public Film insert(Film film){
         return jdbcTemplate.queryForObject(INSERT, filmToSql(film), filmMapper);
@@ -58,6 +66,10 @@ public class FilmRepository {
         } catch (Exception e) {
             throw new BadRequestException(String.format("Фильм с id %d не найден", id));
         }
+    }
+
+    public List<Film> searchByName(String name) {
+        return jdbcTemplateWithoutParams.query(SEARCH_BY_NAME, filmMapper, name);
     }
 
     private MapSqlParameterSource filmToSql(Film film) {

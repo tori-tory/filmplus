@@ -1,6 +1,7 @@
 package ru.jabki.filmplus.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -10,9 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.jabki.filmplus.model.Film;
 import ru.jabki.filmplus.service.FilmService;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -40,9 +44,16 @@ public class FilmController {
         return filmService.update(film);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Operation(summary = "Удалить фильм по id")
     public void delete(@PathVariable("id") Long id) {
         filmService.delete(id);
+    }
+
+    @GetMapping("/searchByName")
+    @Operation(summary = "Поиск фильма по названию")
+    public List<Film> searchByName(@RequestParam(name = "name", required = false)
+                                   @Parameter(example = "Белое солнце пустыни") String name) {
+        return filmService.searchByName(name);
     }
 }

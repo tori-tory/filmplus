@@ -5,11 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.jabki.filmplus.exception.FilmException;
-import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.Film;
 import ru.jabki.filmplus.repository.FilmRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -20,17 +20,12 @@ public class FilmService {
     @Transactional(rollbackFor = Exception.class)
     public Film create(final Film film) {
         validate(film);
-        filmRepository.insert(film);
-        return film;
+        return filmRepository.insert(film);
     }
 
     @Transactional(readOnly = true)
     public Film getById(final Long id) {
-        final Film film = filmRepository.getById(id);
-        if (film == null) {
-            throw new UserException("Фильм не найден");
-        }
-        return film;
+        return filmRepository.getById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -48,7 +43,13 @@ public class FilmService {
 
     @Transactional(rollbackFor = Exception.class)
     public void delete(final Long id) {
+        filmRepository.getById(id);
         filmRepository.delete(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Film> searchByName(final  String name) {
+        return filmRepository.searchByName(name);
     }
 
     private void validate(final Film film) {

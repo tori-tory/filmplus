@@ -17,13 +17,6 @@ public class FeedbackRepository {
         RETURNING *
     """;
 
-    private static final String UPDATE = """
-            UPDATE filmplus.feedback
-            SET user_id = :user_id, film_id = :film_id, review_text = :review_text
-            WHERE id = :id
-            RETURNING *
-            """;
-
     private static final String GET_BY_ID = """
             SELECT *
             FROM filmplus.feedback
@@ -35,10 +28,6 @@ public class FeedbackRepository {
 
     public Feedback insert(Feedback feedback) {
         return jdbcTemplate.queryForObject(INSERT, feedbackToSql(feedback), feedbackMapper);
-    }
-
-    public Feedback update(Feedback feedback) {
-        return jdbcTemplate.queryForObject(UPDATE, feedbackToSql(feedback), feedbackMapper);
     }
 
     public Feedback getById(Long id) {

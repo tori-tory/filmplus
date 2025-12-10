@@ -19,17 +19,12 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public User create(final User user) {
         validate(user);
-        userRepository.insert(user);
-        return user;
+        return userRepository.insert(user);
     }
 
     @Transactional(readOnly = true)
     public User getById(final Long id) {
-        final User user = userRepository.getById(id);
-        if (user == null) {
-            throw new UserException(String.format("Пользователь id = %d не найден", id));
-        }
-        return user;
+        return userRepository.getById(id);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -46,6 +41,7 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void delete(final Long id) {
+        userRepository.getById(id);
         userRepository.delete(id);
     }
 

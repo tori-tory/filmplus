@@ -11,14 +11,22 @@ import ru.jabki.filmplus.repository.LikeRepository;
 public class LikeService {
 
     private final LikeRepository likeRepository;
+    private final UserService userService;
+    private final FilmService filmService;
 
     @Transactional(rollbackFor =  Exception.class)
     public Like create(Like like){
-        return  likeRepository.insert(like);
+        validate(like);
+        return likeRepository.insert(like);
     }
 
     @Transactional(rollbackFor =  Exception.class)
     public void delete(Long userId, Long filmId){
         likeRepository.delete(userId, filmId);
+    }
+
+    private void validate(final Like like) {
+        userService.getById(like.getUserId());
+        filmService.getById(like.getFilmId());
     }
 }
