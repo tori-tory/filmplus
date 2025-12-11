@@ -24,18 +24,8 @@ public class FriendService {
         return friendRepository.insert(friend);
     }
 
-    @Transactional(rollbackFor =  Exception.class)
-    public void delete(final Long id) {
-        friendRepository.delete(id);
-    }
-
     private void validate(final Friend friend) {
         userService.getById(friend.getUserId());
         userService.getById(friend.getFriendId());
-    }
-
-    @Transactional(readOnly = true)
-    public Friend getById(final long id) {
-        return friendRepository.getById(id);
     }
 }

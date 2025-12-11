@@ -16,12 +16,6 @@ public class LikeRepository {
             RETURNING *
             """;
 
-    private static final String DELETE = """
-            DELETE FROM filmplus."like"
-            WHERE user_id = :user_id
-            AND film_id = :film_id
-            """;
-
     private final LikeMapper likeMapper;
     private final NamedParameterJdbcTemplate jdbcTemplate;
 
@@ -29,18 +23,9 @@ public class LikeRepository {
         return jdbcTemplate.queryForObject(INSERT, likeToSql(like), likeMapper);
     }
 
-    public void delete(Long userId, Long filmId) {
-        MapSqlParameterSource params = new MapSqlParameterSource()
-                .addValue("user_id", userId)
-                .addValue("film_id", filmId);
-
-        jdbcTemplate.update(DELETE, params);
-    }
-
     private MapSqlParameterSource likeToSql(Like like) {
         final  MapSqlParameterSource params = new MapSqlParameterSource();
 
-        params.addValue("id", like.getId());
         params.addValue("user_id", like.getUserId());
         params.addValue("film_id", like.getFilmId());
         return params;

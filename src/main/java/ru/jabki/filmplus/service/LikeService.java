@@ -20,11 +20,6 @@ public class LikeService {
         return likeRepository.insert(like);
     }
 
-    @Transactional(rollbackFor =  Exception.class)
-    public void delete(Long userId, Long filmId){
-        likeRepository.delete(userId, filmId);
-    }
-
     private void validate(final Like like) {
         userService.getById(like.getUserId());
         filmService.getById(like.getFilmId());

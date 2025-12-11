@@ -22,13 +22,7 @@ public class FeedbackService {
     @Transactional(rollbackFor = Exception.class)
     public Feedback create(final Feedback feedback) {
         validate(feedback);
-        feedbackRepository.insert(feedback);
-        return feedback;
-    }
-
-    @Transactional(readOnly = true)
-    public Feedback getById(final Long id) {
-        return feedbackRepository.getById(id);
+        return feedbackRepository.insert(feedback);
     }
 
     private void validate (final Feedback feedback) {

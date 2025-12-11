@@ -21,23 +21,23 @@ CREATE TABLE IF NOT EXISTS filmplus.film (
 
 CREATE TABLE IF NOT EXISTS filmplus.feedback (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES filmplus.user (id),
-    film_id INTEGER REFERENCES filmplus.film (id),
-    review_text TEXT,
+    user_id INTEGER REFERENCES filmplus.user (id) NOT NULL,
+    film_id INTEGER REFERENCES filmplus.film (id) NOT NULL,
+    review_text TEXT NOT NULL,
 	created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS filmplus.friend (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES filmplus.user (id),
-    friend_id INTEGER REFERENCES filmplus.user (id),
+    user_id INTEGER REFERENCES filmplus.user (id) NOT NULL,
+    friend_id INTEGER REFERENCES filmplus.user (id) NOT NULL,
 	UNIQUE (user_id, friend_id)
 );
 
 CREATE TABLE IF NOT EXISTS filmplus.like (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES filmplus.user (id),
-    film_id INTEGER REFERENCES filmplus.film (id),
+    user_id INTEGER REFERENCES filmplus.user (id) NOT NULL,
+    film_id INTEGER REFERENCES filmplus.film (id) NOT NULL,
 	CONSTRAINT like_pk UNIQUE (user_id, film_id)
 );
 
