@@ -2,6 +2,7 @@ package ru.jabki.filmplus.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,18 +15,14 @@ import ru.jabki.filmplus.model.User;
 import ru.jabki.filmplus.service.UserService;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/api/v1/user")
 @Tag(name = "Пользователи")
-
 public class UserController {
 
     private final UserService userService;
 
-    public UserController(final UserService userService) {
-        this.userService = userService;
-    }
-
-    @PostMapping()
+    @PostMapping
     @Operation(summary = "Создать пользователя")
     public User create(@RequestBody final User user) {
         return userService.create(user);
@@ -37,7 +34,7 @@ public class UserController {
         return userService.getById(id);
     }
 
-    @PatchMapping()
+    @PatchMapping
     @Operation(summary = "Обновление пользователя")
     public User update(@RequestBody final User user) {
         return userService.update(user);

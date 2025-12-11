@@ -1,0 +1,91 @@
+package ru.jabki.filmplus.repository;
+
+import lombok.AllArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.stereotype.Repository;
+import ru.jabki.filmplus.exception.BadRequestException;
+import ru.jabki.filmplus.model.Film;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Repository
+@AllArgsConstructor
+public class FilmRepository {
+
+    private static final String INSERT = """
+        INSERT INTO filmplus.film(name, description, release_date, duration, genre)
+        VALUES (:name, :description, :release_date, :duration, :genre)
+        RETURNING *
+    """;
+
+    private static final String UPDATE = """
+            UPDATE filmplus.film
+            SET name = :name, description = :description, release_date = :release_date, duration = :duration, genre = :genre
+            WHERE id = :id
+            RETURNING *
+            """;
+
+    private static final String DELETE = """
+            DELETE FROM filmplus.film
+            WHERE id = :id
+            """;
+
+    private static final String GET_BY_ID = """
+            SELECT *
+            FROM filmplus.film
+            WHERE id = :id
+            """;
+    private static final String SEARCH_BY_NAME = """
+            SELECT *
+            FROM filmplus.film
+            WHERE LOWER(name) like LOWER('%'||?||'%')
+            """;
+
+    private final FilmMapper filmMapper;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplateWithoutParams;
+
+    public Film insert(Film film){
+        return jdbcTemplate.queryForObject(INSERT, filmToSql(film), filmMapper);
+    }
+
+    public Film update(Film film){
+        return jdbcTemplate.queryForObject(UPDATE, filmToSql(film), filmMapper);
+    }
+
+    public void delete(Long id){
+        jdbcTemplate.update(DELETE, new MapSqlParameterSource("id", id));
+    }
+
+    public Film getById(Long id) {
+        try {
+            return jdbcTemplate.queryForObject(GET_BY_ID, new MapSqlParameterSource("id", id), filmMapper);
+        } catch (Exception e) {
+            throw new BadRequestException(String.format("Фильм с id %d не найден", id));
+        }
+    }
+
+    public List<Film> searchByName(String name) {
+        return jdbcTemplateWithoutParams.query(SEARCH_BY_NAME, filmMapper, name);
+    }
+
+    private MapSqlParameterSource filmToSql(Film film) {
+        final  MapSqlParameterSource params = new MapSqlParameterSource();
+
+        params.addValue("id", film.getId());
+        params.addValue("name", film.getName());
+        params.addValue("description", film.getDescription());
+        params.addValue("release_date", film.getReleaseDate());
+        params.addValue("duration", film.getDuration());
+        params.addValue("genre",
+                film.getGenres().stream()
+                        .map(Enum::name)
+                        .collect(Collectors.joining(","))
+        );
+
+        return params;
+    }
+}

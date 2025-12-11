@@ -1,57 +1,68 @@
 package ru.jabki.filmplus.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import ru.jabki.filmplus.exception.UserException;
 import ru.jabki.filmplus.model.User;
+import ru.jabki.filmplus.repository.UserRepository;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
 
 @Service
+@AllArgsConstructor
 public class UserService {
 
-    private static final Set<User> users = new HashSet<>();
+    private final UserRepository userRepository;
 
+    @Transactional(rollbackFor = Exception.class)
     public User create(final User user) {
         validate(user);
-        user.setId((long) (users.size() + 1));
-        users.add(user);
-        return user;
+        return userRepository.insert(user);
     }
 
+    @Transactional(readOnly = true)
     public User getById(final Long id) {
-        final User user = users.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
-                .orElse(null);
-        if (user == null) {
-            throw new UserException("Пользователь не найден");
-        }
-        return user;
+        return userRepository.getById(id);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public User update(final User user) {
         validate(user);
         final User existUser = getById(user.getId());
         existUser.setName(user.getName());
         existUser.setEmail(user.getEmail());
+        existUser.setLogin(user.getLogin());
+        existUser.setBirthday(user.getBirthday());
+        userRepository.update(existUser);
         return existUser;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void delete(final Long id) {
-        users.remove(getById(id));
+        userRepository.getById(id);
+        userRepository.delete(id);
     }
 
     private void validate(final User user) {
         if (user == null) {
-            throw new UserException("User is null");
+            throw new UserException("Пользователь не задан");
         }
         if (!StringUtils.hasText(user.getName())) {
-            throw new UserException("User name is empty");
+            throw new UserException("Имя пользователя не может быть пустым");
         }
         if (!StringUtils.hasText(user.getEmail())) {
-            throw new UserException("User email is empty");
+            throw new UserException("Email пользователя не может быть пустым");
+        }
+        if (!StringUtils.hasText(user.getLogin())) {
+            throw new UserException("Login пользователя не может быть пустым");
+        }
+        if (user.getBirthday() == null) {
+            throw new UserException("Дата рождения не может быть пустой");
+        }
+        if (!user.getBirthday().isBefore(LocalDate.now())) {
+            throw new UserException("Дата рождения не может быть из будущего");
         }
     }
 }

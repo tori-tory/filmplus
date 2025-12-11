@@ -4,14 +4,16 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
-public class User {
+public class Film {
 
     private Long id;
     private String name;
-    private String email;
-    private String login;
-    private LocalDate birthday;
+    private String description;
+    private LocalDate releaseDate;
+    private Integer duration;
+    private Set<Genre> genres;
 }
